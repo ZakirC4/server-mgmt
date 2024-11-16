@@ -24,7 +24,16 @@ fn config(conn: &Connection) {
     }
 
     match args[1].as_str() {
-        "-f" => {
+        "-v" => {
+            let mut stmt = conn.prepare("SELECT name, server FROM config").unwrap();
+            println!("Configurations:");
+            while let State::Row = stmt.next().unwrap() {
+                let name: String = stmt.read(0).unwrap();
+                let server: String = stmt.read(1).unwrap();
+                println!("Name: {}, Server: {}", name, server);
+            }
+        },
+        "-c" => {
             if args.len() < 4 {
                 println!("Please provide a directory and a name");
             } else if Path::new(&args[2]).is_file() {
